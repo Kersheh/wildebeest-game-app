@@ -4,18 +4,36 @@ $(document).ready(function() {
 
     // render current board to app
     function renderBoard(board) {
-        var table = $("<table></table>");
-        var x, y;
+        var cell;
         for(i = 0; i < 11; i++) {
-            x = $("<tr></tr>").addClass("tile x " + i);
             for(j = 0; j < 11; j++) {
-                y = $("<td align=\"center\"></td>").addClass("tile y " + j).text(board[i][j]);
-                x.append(y);
+                $("td[x$=\"" + i + "\"][y$=\"" + j + "\"]").text(board[i][j]);
             }
-            table.append(x);
         }
-        $("#board").append(table);
     }
+    // function renderBoard(board) {
+    //     var table = $("<table></table>");
+    //     var x, y;
+    //     for(i = 0; i < 12; i++) {
+    //         x = $("<tr></tr>").addClass("tile").attr("x", i);
+    //         if(i == 0) x.append("<td align=\"center\"></td>").text("x");
+    //         for(j = 0; j < 12; j++) {
+    //             if(j == 0 && i != 0) {
+    //                 x.append("<td align=\"center\"></td>").text(i);
+    //             }
+    //             if(j == 0) {
+    //                 if(j == 11) continue;
+    //                 y = $("<td align=\"center\"></td>").text(j);
+    //             }
+    //             else {
+    //                 y = $("<td align=\"center\" id=\"piece\"></td>").addClass("tile").attr("y", j).text(board[i - 1][j - 1]);
+    //             }
+    //             x.append(y);
+    //         }
+    //         table.append(x);
+    //     }
+    //     $(".board").append(table);
+    // }
 
     // retrieve current board from server
     function getBoard() {
@@ -32,4 +50,8 @@ $(document).ready(function() {
             }
         });
     }
+
+    $(function() {
+        $("#piece").draggable();
+    });
 });

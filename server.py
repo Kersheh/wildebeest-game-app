@@ -15,7 +15,6 @@ def index():
 # current board
 @app.route("/api/v1.0/board", methods=["GET"])
 def get_board():
-  print board
   return jsonify_board(board)
 
 # player move

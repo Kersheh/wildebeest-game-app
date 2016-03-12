@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
   <style>
     /* Remove the navbar's default margin-bottom and rounded borders */ 
@@ -33,37 +34,53 @@
       .row.content {height:auto;} 
     }
 
-    #board {
-        width:220px;
-        height:220px;
+    .board {
+        width:330px;
+        height:330px;
+        border:1px solid black;
+        margin: 0 auto !important;
+        float: none !important;
+    }
+
+    td {
+        width:30px;
+        height:30px;
+
+    }
+
+    .grid {
         border:1px solid black;
     }
 
-    .tile {
-        width:20px;
-        height:20px;
+    .w, .b {
+        font-weight: bold;
+        color: #23CF5F;
+    }
+    .w {
+        background-color: #f1f1f1;
+    }
+    .b {
+        background-color: #000000;
+    }
+
+    .form-group {
+        padding:20px;
     }
   </style>
+  <script>
+    </script>
 </head>
 <body>
 
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
-    <div class="navbar-header">
+    <div class="nav navbar-nav">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>                        
       </button>
-      <a class="navbar-brand" href="/">Wildebeest</a>
-    </div>
-    <div class="collapse navbar-collapse" id="myNavbar">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="/">Game</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-      </ul>
+      <li><a href="/"><span class="glyphicon glyphicon-leaf"> Wildebeest</span></a></li>
     </div>
   </div>
 </nav>
@@ -71,17 +88,205 @@
 <div class="container-fluid text-center">    
   <div class="row content">
     <div class="col-sm-2 sidenav">
-      <p>Left side</p>
+      <!-- <p>Left side</p> -->
     </div>
-    <div class="col-sm-8 text-left"> 
-      <h1>Wildebeest</h1>
-      <div id="board">
-      </div>
+    <div class="col-sm-8 text-center"> 
+        <div>
+          <h1>Wildebeest</h1>
+          <table class="board">
+            <tr x="-1">
+                <td class="grid" align="center"><span class="glyphicon glyphicon-leaf"></span></td>
+                <td class="grid" align="center">0</td>
+                <td class="grid" align="center">1</td>
+                <td class="grid" align="center">2</td>
+                <td class="grid" align="center">3</td>
+                <td class="grid" align="center">4</td>
+                <td class="grid" align="center">5</td>
+                <td class="grid" align="center">6</td>
+                <td class="grid" align="center">7</td>
+                <td class="grid" align="center">8</td>
+                <td class="grid" align="center">9</td>
+                <td class="grid" align="center">10</td>
+            </tr>
+            <tr x="0">
+                <td class="grid" align="center">0</td>
+                <td class="w" align="center" x="0" y="0"> </td>
+                <td class="b" align="center" x="0" y="1"> </td>
+                <td class="w" align="center" x="0" y="2"> </td>
+                <td class="b" align="center" x="0" y="3"> </td>
+                <td class="w" align="center" x="0" y="4"> </td>
+                <td class="b" align="center" x="0" y="5"> </td>
+                <td class="w" align="center" x="0" y="6"> </td>
+                <td class="b" align="center" x="0" y="7"> </td>
+                <td class="w" align="center" x="0" y="8"> </td>
+                <td class="b" align="center" x="0" y="9"> </td>
+                <td class="w" align="center" x="0" y="10"> </td>
+            </tr>
+            <tr x="1">
+                <td class="grid" align="center">1</td>
+                <td class="b" align="center" x="1" y="0"> </td>
+                <td class="w" align="center" x="1" y="1"> </td>
+                <td class="b" align="center" x="1" y="2"> </td>
+                <td class="w" align="center" x="1" y="3"> </td>
+                <td class="b" align="center" x="1" y="4"> </td>
+                <td class="w" align="center" x="1" y="5"> </td>
+                <td class="b" align="center" x="1" y="6"> </td>
+                <td class="w" align="center" x="1" y="7"> </td>
+                <td class="b" align="center" x="1" y="8"> </td>
+                <td class="w" align="center" x="1" y="9"> </td>
+                <td class="b" align="center" x="1" y="10"> </td>
+            </tr>
+            <tr x="2">
+                <td class="grid" align="center">2</td>
+                <td class="w" align="center" x="2" y="0"> </td>
+                <td class="b" align="center" x="2" y="1"> </td>
+                <td class="w" align="center" x="2" y="2"> </td>
+                <td class="b" align="center" x="2" y="3"> </td>
+                <td class="w" align="center" x="2" y="4"> </td>
+                <td class="b" align="center" x="2" y="5"> </td>
+                <td class="w" align="center" x="2" y="6"> </td>
+                <td class="b" align="center" x="2" y="7"> </td>
+                <td class="w" align="center" x="2" y="8"> </td>
+                <td class="b" align="center" x="2" y="9"> </td>
+                <td class="w" align="center" x="2" y="10"> </td>
+            </tr>
+            <tr x="3">
+                <td class="grid" align="center">3</td>
+                <td class="b" align="center" x="3" y="0"> </td>
+                <td class="w" align="center" x="3" y="1"> </td>
+                <td class="b" align="center" x="3" y="2"> </td>
+                <td class="w" align="center" x="3" y="3"> </td>
+                <td class="b" align="center" x="3" y="4"> </td>
+                <td class="w" align="center" x="3" y="5"> </td>
+                <td class="b" align="center" x="3" y="6"> </td>
+                <td class="w" align="center" x="3" y="7"> </td>
+                <td class="b" align="center" x="3" y="8"> </td>
+                <td class="w" align="center" x="3" y="9"> </td>
+                <td class="b" align="center" x="3" y="10"> </td>
+            </tr>
+            <tr x="4">
+                <td class="grid" align="center">4</td>
+                <td class="w" align="center" x="4" y="0"> </td>
+                <td class="b" align="center" x="4" y="1"> </td>
+                <td class="w" align="center" x="4" y="2"> </td>
+                <td class="b" align="center" x="4" y="3"> </td>
+                <td class="w" align="center" x="4" y="4"> </td>
+                <td class="b" align="center" x="4" y="5"> </td>
+                <td class="w" align="center" x="4" y="6"> </td>
+                <td class="b" align="center" x="4" y="7"> </td>
+                <td class="w" align="center" x="4" y="8"> </td>
+                <td class="b" align="center" x="4" y="9"> </td>
+                <td class="w" align="center" x="4" y="10"> </td>
+            </tr>
+            <tr x="5">
+                <td class="grid" align="center">5</td>
+                <td class="b" align="center" x="5" y="0"> </td>
+                <td class="w" align="center" x="5" y="1"> </td>
+                <td class="b" align="center" x="5" y="2"> </td>
+                <td class="w" align="center" x="5" y="3"> </td>
+                <td class="b" align="center" x="5" y="4"> </td>
+                <td class="w" align="center" x="5" y="5"> </td>
+                <td class="b" align="center" x="5" y="6"> </td>
+                <td class="w" align="center" x="5" y="7"> </td>
+                <td class="b" align="center" x="5" y="8"> </td>
+                <td class="w" align="center" x="5" y="9"> </td>
+                <td class="b" align="center" x="5" y="10"> </td>
+            </tr>
+            <tr x="6">
+                <td class="grid" align="center">6</td>
+                <td class="w" align="center" x="6" y="0"> </td>
+                <td class="b" align="center" x="6" y="1"> </td>
+                <td class="w" align="center" x="6" y="2"> </td>
+                <td class="b" align="center" x="6" y="3"> </td>
+                <td class="w" align="center" x="6" y="4"> </td>
+                <td class="b" align="center" x="6" y="5"> </td>
+                <td class="w" align="center" x="6" y="6"> </td>
+                <td class="b" align="center" x="6" y="7"> </td>
+                <td class="w" align="center" x="6" y="8"> </td>
+                <td class="b" align="center" x="6" y="9"> </td>
+                <td class="w" align="center" x="6" y="10"> </td>
+            </tr>
+            <tr x="7">
+                <td class="grid" align="center">7</td>
+                <td class="b" align="center" x="7" y="0"> </td>
+                <td class="w" align="center" x="7" y="1"> </td>
+                <td class="b" align="center" x="7" y="2"> </td>
+                <td class="w" align="center" x="7" y="3"> </td>
+                <td class="b" align="center" x="7" y="4"> </td>
+                <td class="w" align="center" x="7" y="5"> </td>
+                <td class="b" align="center" x="7" y="6"> </td>
+                <td class="w" align="center" x="7" y="7"> </td>
+                <td class="b" align="center" x="7" y="8"> </td>
+                <td class="w" align="center" x="7" y="9"> </td>
+                <td class="b" align="center" x="7" y="10"> </td>
+            </tr>
+            <tr x="8">
+                <td class="grid" align="center">8</td>
+                <td class="w" align="center" x="8" y="0"> </td>
+                <td class="b" align="center" x="8" y="1"> </td>
+                <td class="w" align="center" x="8" y="2"> </td>
+                <td class="b" align="center" x="8" y="3"> </td>
+                <td class="w" align="center" x="8" y="4"> </td>
+                <td class="b" align="center" x="8" y="5"> </td>
+                <td class="w" align="center" x="8" y="6"> </td>
+                <td class="b" align="center" x="8" y="7"> </td>
+                <td class="w" align="center" x="8" y="8"> </td>
+                <td class="b" align="center" x="8" y="9"> </td>
+                <td class="w" align="center" x="8" y="10"> </td>
+            </tr>
+            <tr x="9">
+                <td class="grid" align="center">9</td>
+                <td class="b" align="center" x="9" y="0"> </td>
+                <td class="w" align="center" x="9" y="1"> </td>
+                <td class="b" align="center" x="9" y="2"> </td>
+                <td class="w" align="center" x="9" y="3"> </td>
+                <td class="b" align="center" x="9" y="4"> </td>
+                <td class="w" align="center" x="9" y="5"> </td>
+                <td class="b" align="center" x="9" y="6"> </td>
+                <td class="w" align="center" x="9" y="7"> </td>
+                <td class="b" align="center" x="9" y="8"> </td>
+                <td class="w" align="center" x="9" y="9"> </td>
+                <td class="b" align="center" x="9" y="10"> </td>
+            </tr>
+            <tr x="10">
+                <td class="grid" align="center">10</td>
+                <td class="w" align="center" x="10" y="0"> </td>
+                <td class="b" align="center" x="10" y="1"> </td>
+                <td class="w" align="center" x="10" y="2"> </td>
+                <td class="b" align="center" x="10" y="3"> </td>
+                <td class="w" align="center" x="10" y="4"> </td>
+                <td class="b" align="center" x="10" y="5"> </td>
+                <td class="w" align="center" x="10" y="6"> </td>
+                <td class="b" align="center" x="10" y="7"> </td>
+                <td class="w" align="center" x="10" y="8"> </td>
+                <td class="b" align="center" x="10" y="9"> </td>
+                <td class="w" align="center" x="10" y="10"> </td>
+            </tr>
+          </table>
+        </div>
+      <!-- Form: Improve later; drag and drop? -->
+        <div>
+          <form class="form-inline">
+          <div class="form-group">
+            <label for="move-piece">Piece:</label>
+            <input type="text" class="form-control" id="piece" placeholder="P">
+          </div>
+          <div class="form-group">
+            <label for="move-x">X:</label>
+            <input type="text" class="form-control" id="move-x" placeholder="0">
+          </div>
+          </form>
+          <form class="form-inline">
+          <div class="form-group">
+            <label for="move-y">Y:</label>
+            <input type="text" class="form-control" id="move-y" placeholder="0">
+          </div>
+          <a class="btn btn-default">Move piece</a>
+          </form>
+        </div>
     </div>
     <div class="col-sm-2 sidenav">
-      <div class="well">
-        <p>Right side</p>
-      </div>
+        <!-- <p>Right side</p> -->
     </div>
   </div>
 </div>
