@@ -1,5 +1,5 @@
 import json
-from flask import Flask, jsonify
+from flask import Flask, jsonify, abort
 import wildebeest_board_generator
 gen = wildebeest_board_generator
 
@@ -12,35 +12,61 @@ board = []
 def index():
   return open("static/index.html").read()
 
+# reset board
+@app.route("/api/v1.0/board/reset", methods=["GET"])
+def reset_board():
+  global board
+  board = init_board()
+  return jsonify_board(board)
+
 # current board
 @app.route("/api/v1.0/board", methods=["GET"])
 def get_board():
   return jsonify_board(board)
 
 # player move
-@app.route("/api/v1.0/<string:move>", methods=["GET"])
+@app.route("/api/v1.0/move/<string:move>", methods=["GET"])
 def get_move(move):
-  return jsonify_board(init_board())
+  global board
   coords = move.split("x")
   # check api call
-  if len(coords) is 2:
+  if len(coords) is 4:
     try:
-      int(coords[0])
-      if coords[0] >= 0 or coords[0] <= 10:
-        try:
-          int(coords[1])
-          if coords[1] >= 0 or coords[1] <= 10:
-            # process move here
-            pass
-        except:
-          print "Invalid api call to move piece."
+      for i in range(4):
+        if int(coords[i]) < 0 or int(coords[i]) > 10:
+          abort(400)
+      new_board = board.move_piece(int(coords[0]), int(coords[1]), int(coords[2]), int(coords[3]))
+      if new_board is not None:
+        board = new_board
+        return jsonify_board(board)
+      else:
+        abort(400)
+      # if is_move_valid(int(coords[0]), int(coords[1]), int(coords[2]), int(coords[3])):
+      #   print "test"
+      #   new_board = board.move_piece(int(coords[0]), int(coords[1]), int(coords[2]), int(coords[3]))
+      #   if new_board is not None:
+      #     board = new_board
+      #   return jsonify_board(board)
+      # else:
+      #   print "Invalid api call to move piece."
+      #   return 400
     except:
-      print "Invalid api call to move piece."
+      abort(400)
   else:
-    print "Invalid api call to move piece."
+    abort(400)
+
+def is_move_valid(x, y, new_x, new_y):
+  global board
+  friendly_pieces = gen.WHITE_ID if board.player_turn is "W" else gen.BLACK_ID
+  coords = board.legal_piece_coordinates(board.get_piece(x, y), friendly_pieces)
+  for move in coords:
+    if move[0] is new_x and move[1] is new_y:
+      return True
+  return False
 
 def jsonify_board(board):
-  json_board = [["." for i in range(11)] for j in range(11)]
+  result = {"player_turn": board.player_turn}
+  json_board = [[" " for i in range(11)] for j in range(11)]
   json_board[3][1] = "*"
   json_board[3][9] = "*"
   json_board[5][5] = "#"
@@ -48,7 +74,8 @@ def jsonify_board(board):
   json_board[7][9] = "*"
   for piece in board.pieces:
     json_board[piece.x][piece.y] = piece.id
-  return json.dumps(json_board)
+  result["board"] = json_board
+  return json.dumps(result)
 
 def init_board():
   return gen.load_board("board")

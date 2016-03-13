@@ -55,7 +55,7 @@ class Wildebeest(object):
 
     # return board as 2D array
     def get_board(self):
-        board = [["." for i in range(11)] for j in range(11)]
+        board = [[" " for i in range(11)] for j in range(11)]
         board[3][1] = "*"
         board[3][9] = "*"
         board[5][5] = "#"
@@ -680,6 +680,115 @@ class Wildebeest(object):
                         yield self.generate_board(pieces)
                         board = self.get_board() # reset temp board
                         pieces = self.pieces[:] # reset temp pieces
+
+    # function allows user to move piece
+    def move_piece(self, x, y, new_x, new_y):
+        board = self.get_board()
+        pieces = self.pieces[:]
+        piece = self.get_piece(x, y)
+        move = (new_x, new_y)
+        if self.player_turn is "W":
+            friendly_pieces = WHITE_ID
+            enemy_pieces = BLACK_ID
+        else:
+            friendly_pieces = BLACK_ID
+            enemy_pieces = WHITE_ID
+
+        # check if move is legal
+        if move not in self.legal_piece_coordinates(piece, friendly_pieces):
+            return None
+
+        # gorilla
+        if piece.id is "G" or piece.id is "g":
+            # cannot push gorilla
+            if board[move[0]][move[1]] is "G" or board[move[0]][move[1]] is "g":
+                return None
+            # attempts to push piece if piece found
+            if board[move[0]][move[1]] in friendly_pieces or \
+               board[move[0]][move[1]] in enemy_pieces:
+                id_pushed = board[move[0]][move[1]]
+                x_squished = (move[0] - piece.x) + move[0]
+                y_squished = (move[1] - piece.y) + move[1]
+                # cannot push piece off edge
+                if x_squished < 0 or x_squished > 10 or \
+                   y_squished < 0 or y_squished > 10:
+                    return None
+                # cannot push piece into gorilla
+                if board[x_squished][y_squished] is "G" or \
+                   board[x_squished][y_squished] is "g":
+                    return None
+                # remove pushed piece
+                pieces.remove(self.get_piece(move[0], move[1]))
+                # remove squished piece if exists
+                if board[x_squished][y_squished] in friendly_pieces or \
+                   board[x_squished][y_squished] in enemy_pieces:
+                    pieces.remove(self.get_piece(x_squished, y_squished))
+                # add pushed piece
+                pieces.append(Piece(id_pushed, x_squished, y_squished))
+            # remove old piece
+            if piece in pieces:
+                pieces.remove(piece)
+            # add new piece
+            pieces.append(Piece(piece.id, move[0], move[1]))
+            return self.generate_board(pieces)
+            board = self.get_board() # reset temp board
+            pieces = self.pieces[:] # reset temp pieces
+
+        # pawn becomes time machine
+        elif piece.id is "P" or piece.id is "p":
+            # remove old piece
+            if piece in pieces:
+                pieces.remove(piece)
+            # transform pawn into time machine if reaches end of board
+            if piece.id is "P" and move[0] is 10:
+                pieces.append(Piece("H", move[0], move[1]))
+            elif piece.id is "p" and move[0] is 0:
+                pieces.append(Piece("h", move[0], move[1]))
+            # add new piece
+            else:
+                pieces.append(Piece(piece.id, move[0], move[1]))
+
+            # remove enemy piece
+            if board[move[0]][move[1]] in enemy_pieces:
+                pieces.remove(self.get_piece(move[0], move[1]))
+            return self.generate_board(pieces)
+            board = self.get_board() # reset temp board
+            pieces = self.pieces[:] # reset temp pieces
+
+        # king 
+        elif piece.id is "K" or piece.id is "k":
+            # remove old piece
+            if piece in pieces:
+                pieces.remove(piece)
+            # transform king into king with a jet back if on middle square
+            if move[0] is 5 and move[1] is 5:
+                if piece.id is "K":
+                    pieces.append(Piece("W", move[0], move[1]))
+                if piece.id is "k":
+                    pieces.append(Piece("w", move[0], move[1]))
+            # add new piece
+            else:
+                pieces.append(Piece(piece.id, move[0], move[1]))
+            # remove enemy piece
+            if board[move[0]][move[1]] in enemy_pieces:
+                pieces.remove(self.get_piece(move[0], move[1]))
+            return self.generate_board(pieces)
+            board = self.get_board() # reset temp board
+            pieces = self.pieces[:] # reset temp pieces
+
+        # all other pieces
+        else:
+            # remove old piece
+            if piece in pieces:
+                pieces.remove(piece)
+            # add new piece
+            pieces.append(Piece(piece.id, move[0], move[1]))
+            # remove enemy piece
+            if board[move[0]][move[1]] in enemy_pieces:
+                pieces.remove(self.get_piece(move[0], move[1]))
+            return self.generate_board(pieces)
+            board = self.get_board() # reset temp board
+            pieces = self.pieces[:] # reset temp pieces
 
 # load board from stdin
 def load_board(filename):

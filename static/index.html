@@ -4,69 +4,12 @@
   <title>Wildebeest</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="static/img/favicon.ico">
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-  <style>
-    /* Remove the navbar's default margin-bottom and rounded borders */ 
-    .navbar {
-      margin-bottom: 0;
-      border-radius: 0;
-    }
-    
-    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
-    .row.content {height: 720px}
-    
-    /* Set gray background color and 100% height */
-    .sidenav {
-      padding-top: 20px;
-      background-color: #f1f1f1;
-      height: 100%;
-    }
-    
-    /* On small screens, set height to 'auto' for sidenav and grid */
-    @media screen and (max-width: 767px) {
-      .sidenav {
-        height: auto;
-        padding: 15px;
-      }
-      .row.content {height:auto;} 
-    }
-
-    .board {
-        width:330px;
-        height:330px;
-        border:1px solid black;
-        margin: 0 auto !important;
-        float: none !important;
-    }
-
-    td {
-        width:30px;
-        height:30px;
-
-    }
-
-    .grid {
-        border:1px solid black;
-    }
-
-    .w, .b {
-        font-weight: bold;
-        color: #23CF5F;
-    }
-    .w {
-        background-color: #f1f1f1;
-    }
-    .b {
-        background-color: #000000;
-    }
-
-    .form-group {
-        padding:20px;
-    }
-  </style>
+  <link href="static/css/wildebeest.css" rel="stylesheet"></script>
   <script>
     </script>
 </head>
@@ -92,8 +35,8 @@
     </div>
     <div class="col-sm-8 text-center"> 
         <div>
-          <h1>Wildebeest</h1>
-          <table class="board">
+          <h3>Wildebeest</h3>
+          <table class="board" id="invalid-move" data-trigger="focus" data-placement="right" data-content="Invalid move.">
             <tr x="-1">
                 <td class="grid" align="center"><span class="glyphicon glyphicon-leaf"></span></td>
                 <td class="grid" align="center">0</td>
@@ -264,24 +207,29 @@
             </tr>
           </table>
         </div>
-      <!-- Form: Improve later; drag and drop? -->
         <div>
+          <p style="padding:10px">Player: W --- Player Turn: <span id="turn"></span>
+          <span id="loading" class="glyphicon"></span></p>
+          <p style="font-weight: bold" id="winner"></p>
           <form class="form-inline">
           <div class="form-group">
-            <label for="move-piece">Piece:</label>
-            <input type="text" class="form-control" id="piece" placeholder="P">
+            <input type="text" class="form-control" id="move-current-x" placeholder="X">
           </div>
           <div class="form-group">
-            <label for="move-x">X:</label>
-            <input type="text" class="form-control" id="move-x" placeholder="0">
+            <input type="text" class="form-control" id="move-current-y" placeholder="Y">
           </div>
           </form>
           <form class="form-inline">
           <div class="form-group">
-            <label for="move-y">Y:</label>
-            <input type="text" class="form-control" id="move-y" placeholder="0">
+            <input type="text" class="form-control" id="move-new-x" placeholder="New X">
           </div>
-          <a class="btn btn-default">Move piece</a>
+          <div class="form-group">
+            <input type="text" class="form-control" id="move-new-y" placeholder="New Y">
+          </div>
+          </form>
+          <form class="form-inline">
+          <a class="btn btn-default" id="set-move">Move piece</a>
+          <a class="btn btn-default" id="reset-board">Reset board</a>
           </form>
         </div>
     </div>
