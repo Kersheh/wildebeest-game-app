@@ -50,11 +50,13 @@ def get_move(move):
 @app.route("/api/v1.0/move/ai", methods=["GET"])
 def get_move_ai():
   global board
+  print board
   moves = []
   for move in board.possible_moves():
     moves.append(Move(move))
   # sort boards based on score and output best score
   moves.sort(key=lambda x: x.score, reverse=True)
+  board = moves[0].board
   return jsonify_board(moves[0].board)
 
 # package board into json for api response
