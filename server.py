@@ -50,18 +50,14 @@ def get_move(move):
 @app.route("/api/v1.0/move/ai", methods=["GET"])
 def get_move_ai():
   global board
+  moves = []
   for move in board.possible_moves():
-    return jsonify_board(move)
+    moves.append(Move(move))
+  # sort boards based on score and output best score
+  moves.sort(key=lambda x: x.score, reverse=True)
+  return jsonify_board(moves[0].board)
 
-def is_move_valid(x, y, new_x, new_y):
-  global board
-  friendly_pieces = gen.WHITE_ID if board.player_turn is "W" else gen.BLACK_ID
-  coords = board.legal_piece_coordinates(board.get_piece(x, y), friendly_pieces)
-  for move in coords:
-    if move[0] is new_x and move[1] is new_y:
-      return True
-  return False
-
+# package board into json for api response
 def jsonify_board(board):
   result = {"player_turn": board.player_turn}
   json_board = [[" " for i in range(11)] for j in range(11)]
@@ -75,8 +71,75 @@ def jsonify_board(board):
   result["board"] = json_board
   return json.dumps(result)
 
+# initial the board based on server file
 def init_board():
   return gen.load_board("board")
+
+## An instance of a state  
+class Move:
+    HEUR_VAL = {
+        "K": 500, "W": 500, "E": 150, "G": 100,
+        "S": 120, "O": 20, "J": 110, "C": 100, 
+        "X": 40, "H": 10, "Z": 50, "P": 10, 
+        "B": 30, "N": 40, "R": 60
+    }
+
+    def __init__(self, board):
+        self.board = board
+        self.score = self.max(board, 1)
+
+    def __eq__(self, other):
+        return self.__repr__() == other.__repr__()
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.__repr__())
+
+    def __repr__(self):
+        s = "{0}".format(self.score) + "\n"
+        s += "{0}".format(self.board)
+        return s
+
+    def heuristic(self, board):
+        score = 0
+        for piece in self.board.pieces:
+            # black's turn, calculate white's move
+            if self.board.player_turn is "B":
+                if piece.id.isupper():
+                    score += Move.HEUR_VAL[piece.id.upper()]
+                if piece.id.islower():
+                    score -= Move.HEUR_VAL[piece.id.upper()]
+            # white's turn, calculate black's move
+            if self.board.player_turn is "W":
+                if piece.id.islower():
+                    score += Move.HEUR_VAL[piece.id.upper()]
+                if piece.id.isupper():
+                    score -= Move.HEUR_VAL[piece.id.upper()]
+        return score
+
+    def max(self, board, depth):
+        if depth is 0:
+            return self.heuristic(board)
+        bestScore = -1000000
+        for move in board.possible_moves():
+            score = self.min(move, depth - 1)
+            if score > bestScore:
+                bestScore = score
+                bestMove = move
+        return bestScore
+
+    def min(self, board, depth):
+        if depth is 0:
+            return self.heuristic(board)
+        worstScore = 1000000
+        for move in board.possible_moves():
+            score = self.max(move, depth - 1)
+            if score < worstScore:
+                worstScore = score
+                worstMove = move
+        return worstScore
 
 if __name__ == "__main__":
   board = init_board()
