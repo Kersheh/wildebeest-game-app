@@ -41,19 +41,17 @@ def get_move(move):
         return jsonify_board(board)
       else:
         abort(400)
-      # if is_move_valid(int(coords[0]), int(coords[1]), int(coords[2]), int(coords[3])):
-      #   print "test"
-      #   new_board = board.move_piece(int(coords[0]), int(coords[1]), int(coords[2]), int(coords[3]))
-      #   if new_board is not None:
-      #     board = new_board
-      #   return jsonify_board(board)
-      # else:
-      #   print "Invalid api call to move piece."
-      #   return 400
     except:
       abort(400)
   else:
     abort(400)
+
+# AI move
+@app.route("/api/v1.0/move/ai", methods=["GET"])
+def get_move_ai():
+  global board
+  for move in board.possible_moves():
+    return jsonify_board(move)
 
 def is_move_valid(x, y, new_x, new_y):
   global board

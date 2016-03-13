@@ -54,15 +54,32 @@ $(document).ready(function() {
                 if(isWinner(data["board"])) return;
                 disableInterface();
                 loading();
+                getMoveAI();
             },
             error: function(jqXHR, status) {
                 $("#invalid-move").popover("show");
             },
             statusCode: {
                 400: function () {
-                    console.log("test");
                     $("#invalid-move").popover("show");
                 }
+            }
+        });
+    }
+
+    // retrieve AI move from server
+    function getMoveAI() {
+        $.ajax({
+            type: "GET",
+            url: "api/v1.0/move/ai",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(data, status, jqXHR) {
+                renderBoard(data["board"]);
+                setplayerTurn(data["player_turn"]);
+                if(isWinner(data["board"])) return;
+                enableInterface();
+                loadingComplete();
             }
         });
     }
@@ -98,6 +115,7 @@ $(document).ready(function() {
         if(w == true && b == false) $("#winner").text("White wins!");
         if(w == false && b == true) $("#winner").text("Black wins!");
         if(w == false && b == false) $("#winner").text("Tie game!");
+        loadingComplete();
         disableInterface();
         return true;
     }
