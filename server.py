@@ -1,5 +1,5 @@
 import json
-from flask import Flask, jsonify, abort
+from flask import Flask, jsonify, abort, request
 import wildebeest_board_generator
 gen = wildebeest_board_generator
 
@@ -15,19 +15,13 @@ def index():
 # reset board
 @app.route("/api/v1.0/board/reset", methods=["GET"])
 def reset_board():
-  global board
-  board = init_board()
-  return jsonify_board(board)
-
-# current board
-@app.route("/api/v1.0/board", methods=["GET"])
-def get_board():
-  return jsonify_board(board)
+  return jsonify_board(init_board())
 
 # player move
-@app.route("/api/v1.0/move/<string:move>", methods=["GET"])
+@app.route("/api/v1.0/move/<string:move>", methods=["POST"])
 def get_move(move):
-  global board
+  client_board = request.get_json(silent=True)
+  board = deserialize_board(client_board)
   coords = move.split("x")
   # check api call
   if len(coords) is 4:
@@ -47,10 +41,10 @@ def get_move(move):
     abort(400)
 
 # AI move
-@app.route("/api/v1.0/move/ai", methods=["GET"])
+@app.route("/api/v1.0/move/ai", methods=["POST"])
 def get_move_ai():
-  global board
-  print board
+  client_board = json.dumps(request.get_json(silent=True))
+  board = deserialize_board(client_board)
   moves = []
   for move in board.possible_moves():
     moves.append(Move(move))
@@ -77,6 +71,21 @@ def jsonify_board(board):
 def init_board():
   return gen.load_board("board")
 
+def deserialize_board(json):
+  pieces = []
+  for i in range(11):
+    for j in range(11):
+      if json["board"][i][j] in gen.WHITE_ID or \
+         json["board"][i][j] in gen.BLACK_ID:
+        pieces.append(gen.Piece(json["board"][i][j], i, j))
+  test = [gen.Piece("Z", 0, 0)]
+  # can't figure out why the object isn't being generated
+  print "test"
+  print gen.Wildebeest("W", gen.Piece("R", 0, 0), 0, 0, 0)
+  print gen.Wildebeest(json["player_turn"], pieces, 0, 0, 0)
+  return gen.Wildebeest(json["player_turn"], pieces, 0, 0, 0)
+
+DEPTH = 1
 ## An instance of a state  
 class Move:
     HEUR_VAL = {
@@ -88,7 +97,7 @@ class Move:
 
     def __init__(self, board):
         self.board = board
-        self.score = self.max(board, 1)
+        self.score = self.max(board, DEPTH)
 
     def __eq__(self, other):
         return self.__repr__() == other.__repr__()
@@ -145,5 +154,5 @@ class Move:
 
 if __name__ == "__main__":
   board = init_board()
-  #app.run(host="192.168.2.156", port=5000)
-  app.run()
+  #app.run(host="192.168.2.156", port=5000, threaded=True)
+  app.run(threaded=True)

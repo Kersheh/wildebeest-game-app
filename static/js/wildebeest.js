@@ -1,6 +1,7 @@
 $(document).ready(function() {
     //initialize game
-    getBoard();
+    var current_board;
+    newBoard();
 
     // render current board to app
     function renderBoard(board) {
@@ -12,26 +13,38 @@ $(document).ready(function() {
         }
     }
 
-    // retrieve current board from server
-    function getBoard() {
+    // retrieve new board from server
+    function newBoard() {
         $.ajax({
             type: "GET",
-            url: "api/v1.0/board",
+            url: "api/v1.0/board/reset",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(data, status, jqXHR) {
-                renderBoard(data["board"]);
-                setplayerTurn(data["player_turn"]);
+                current_board = data;
+                renderBoard(current_board["board"]);
+                setplayerTurn();
             },
             error: function(jqXHR, status) {
-                console.log("Error status: " + status);
+                console.log("Error retrieving board from server. Status: " + status);
             }
         });
     }
 
+    // reset board button
+    $("#reset-board").click(function() {
+        current_board = newBoard();
+        $("#winner").text("");
+        $("#invalid-move").popover("hide");
+        renderBoard(current_board["board"]);
+        setplayerTurn();
+        enableInterface();
+        loadingComplete();
+    });
+
     // set visual queue for player turn
-    function setplayerTurn(turn) {
-        $("#turn").text(turn);
+    function setplayerTurn() {
+        $("#turn").text(current_board["player_turn"]);
     }
 
     // submit move button
@@ -43,15 +56,17 @@ $(document).ready(function() {
     function setMove(x, y, x_new, y_new) {
         move_url = "api/v1.0/move/" + x + "x" + y + "x" + x_new + "x" + y_new;
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: move_url,
+            data: JSON.stringify(current_board),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(data, status, jqXHR) {
+                current_board = data;
                 $("#invalid-move").popover("hide");
-                renderBoard(data["board"]);
-                setplayerTurn(data["player_turn"]);
-                if(isWinner(data["board"])) return;
+                renderBoard(current_board["board"]);
+                setplayerTurn();
+                if(isWinner()) return;
                 disableInterface();
                 loading();
                 getMoveAI();
@@ -69,46 +84,40 @@ $(document).ready(function() {
 
     // retrieve AI move from server
     function getMoveAI() {
+        // $.get("api/v1.0/move/ai", function(data, status) {
+        //     current_board = data;
+        //     renderBoard(current_board["board"]);
+        //     setplayerTurn();
+        //     if(isWinner()) return;
+        //     enableInterface();
+        //     loadingComplete();
+        // });
         $.ajax({
-            type: "GET",
+            type: "POST",
+            data: JSON.stringify(current_board),
             url: "api/v1.0/move/ai",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(data, status, jqXHR) {
-                renderBoard(data["board"]);
-                setplayerTurn(data["player_turn"]);
-                if(isWinner(data["board"])) return;
+                current_board = data;
+                renderBoard(current_board["board"]);
+                setplayerTurn();
+                if(isWinner()) return;
                 enableInterface();
                 loadingComplete();
             }
         });
     }
 
-    // reset board through server
-    $("#reset-board").click(function() {
-        $.ajax({
-            type: "GET",
-            url: "api/v1.0/board/reset",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function(data, status, jqXHR) {
-                $("#winner").text("");
-                $("#invalid-move").popover("hide");
-                renderBoard(data["board"]);
-                setplayerTurn(data["player_turn"]);
-                enableInterface();
-                loadingComplete();
-            }
-        });
-    });
+    
 
     // check if winner
-    function isWinner(board) {
+    function isWinner() {
         var w = false, b = false;
         for(i = 0; i < 11; i++) {
             for(j = 0; j < 11; j++) {
-                if(board[i][j] == "K" || board[i][j] == "W") w = true;
-                if(board[i][j] == "k" || board[i][j] == "w") b = true;
+                if(current_board["board"][i][j] == "K" || current_board["board"][i][j] == "W") w = true;
+                if(current_board["board"][i][j] == "k" || current_board["board"][i][j] == "w") b = true;
             }
         }
         if(w == true && b == true) return false;
