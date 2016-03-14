@@ -474,14 +474,18 @@ class Wildebeest(object):
                     cart_w_y = piece.y
                 if piece.id is "x":
                     cart_b_y = piece.y
-            if cart_w_y is cart_b_y:
-                same_column = True
+            try:
+                if cart_w_y is cart_b_y:
+                    same_column = True
+            except:
+                pass
         # white golf cart (charged)
+        remove_pieces = []
         for piece in pieces:
             if piece.id is "X" and cart_w is True:
                 for removed_piece in pieces:
                     if removed_piece.y is piece.y:
-                        pieces.remove(removed_piece)
+                        remove_pieces.append(removed_piece)
                 if not same_column:
                     if piece.x is 0:
                         pieces.append(Piece(piece.id, 10, piece.y))
@@ -493,13 +497,16 @@ class Wildebeest(object):
             if piece.id is "x" and cart_b is True:
                 for removed_piece in pieces:
                     if removed_piece.y is piece.y:
-                        pieces.remove(removed_piece)
+                        remove_pieces.append(removed_piece)
                 if not same_column:
                     if piece.x is 0:
                         pieces.append(Piece(piece.id, 10, piece.y))
                     if piece.x is 10:
                         pieces.append(Piece(piece.id, 0, piece.y))
                 break
+        # remove pieces
+        for piece in remove_pieces:
+            pieces.remove(piece)
 
         ## transporter
         # check transporter pads for pieces
@@ -588,31 +595,33 @@ class Wildebeest(object):
                 # gorilla
                 if piece.id is "G" or piece.id is "g":
                     for move in self.legal_piece_coordinates(piece, friendly_pieces):
-                        # cannot push gorilla
-                        if board[move[0]][move[1]] is "G" or board[move[0]][move[1]] is "g":
-                            continue
-                        # attempts to push piece if piece found
-                        if board[move[0]][move[1]] in friendly_pieces or \
-                           board[move[0]][move[1]] in enemy_pieces:
-                            id_pushed = board[move[0]][move[1]]
-                            x_squished = (move[0] - piece.x) + move[0]
-                            y_squished = (move[1] - piece.y) + move[1]
-                            # cannot push piece off edge
-                            if x_squished < 0 or x_squished > 10 or \
-                               y_squished < 0 or y_squished > 10:
+                        # gorilla pushes piece if not flung
+                        if abs(piece.x - move[0]) is 1 and abs(piece.y - move[1]) is 1:
+                            # cannot push gorilla
+                            if board[move[0]][move[1]] is "G" or board[move[0]][move[1]] is "g":
                                 continue
-                            # cannot push piece into gorilla
-                            if board[x_squished][y_squished] is "G" or \
-                               board[x_squished][y_squished] is "g":
-                                continue
-                            # remove pushed piece
-                            pieces.remove(self.get_piece(move[0], move[1]))
-                            # remove squished piece if exists
-                            if board[x_squished][y_squished] in friendly_pieces or \
-                               board[x_squished][y_squished] in enemy_pieces:
-                                pieces.remove(self.get_piece(x_squished, y_squished))
-                            # add pushed piece
-                            pieces.append(Piece(id_pushed, x_squished, y_squished))
+                            # attempts to push piece if piece found
+                            if board[move[0]][move[1]] in friendly_pieces or \
+                               board[move[0]][move[1]] in enemy_pieces:
+                                id_pushed = board[move[0]][move[1]]
+                                x_squished = (move[0] - piece.x) + move[0]
+                                y_squished = (move[1] - piece.y) + move[1]
+                                # cannot push piece off edge
+                                if x_squished < 0 or x_squished > 10 or \
+                                   y_squished < 0 or y_squished > 10:
+                                    continue
+                                # cannot push piece into gorilla
+                                if board[x_squished][y_squished] is "G" or \
+                                   board[x_squished][y_squished] is "g":
+                                    continue
+                                # remove pushed piece
+                                pieces.remove(self.get_piece(move[0], move[1]))
+                                # remove squished piece if exists
+                                if board[x_squished][y_squished] in friendly_pieces or \
+                                   board[x_squished][y_squished] in enemy_pieces:
+                                    pieces.remove(self.get_piece(x_squished, y_squished))
+                                # add pushed piece
+                                pieces.append(Piece(id_pushed, x_squished, y_squished))
                         # remove old piece
                         if piece in pieces:
                             pieces.remove(piece)
