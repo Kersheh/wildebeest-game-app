@@ -8,14 +8,14 @@ $(document).ready(function() {
         // clear pieces
         for(i = 0; i < 11; i++) {
             for(j = 0; j < 11; j++) {
-                $("td[x$=\"" + i + "\"][y$=\"" + j + "\"]").text("");
+                $("td[x$=\"" + String(i) + "\"][y$=\"" + String(j) + "\"]").text("");
             }
         }
         var x, y;
         for(key in pieces) {
-            x = pieces[key]["x"];
-            y = pieces[key]["y"];
-            $("td[x$=\"" + x + "\"][y$=\"" + y + "\"]").text(pieces[key]["id"]);
+            x = "\"" + pieces[key]["x"] + "\"";
+            y = "\"" + pieces[key]["y"] + "\""
+            $("td[x=" + x + "][y=" + y + "]").text(pieces[key]["id"]);
         }
     }
 
