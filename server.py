@@ -15,20 +15,20 @@ def index():
 # reset board
 @app.route("/api/v1.0/board/reset", methods=["GET"])
 def reset_board():
-  global board
   board = init_board()
   print "-- NEW GAME --"
   print board
+  return json.dumps(board, default=lambda o: o.__dict__)
   return jsonify_board(board)
 
 # player move
 @app.route("/api/v1.0/move/<string:move>", methods=["POST"])
 def get_move(move):
   client_board = request.get_json(silent=True)
-  board = deserialize_board(client_board)
+  board = new_board_object(client_board)
   coords = move.split("x")
   # check api call
-  if len(coords) is 4:
+  if len(coords) == 4:
     try:
       for i in range(4):
         if int(coords[i]) < 0 or int(coords[i]) > 10:
@@ -41,7 +41,7 @@ def get_move(move):
         board = new_board
         print "Human Player:"
         print board
-        return jsonify_board(board)
+        return json.dumps(board, default=lambda o: o.__dict__)
       else:
         abort(400)
     except:
@@ -52,8 +52,8 @@ def get_move(move):
 # AI move
 @app.route("/api/v1.0/move/ai", methods=["POST"])
 def get_move_ai():
-  client_board = json.dumps(request.get_json(silent=True))
-  board = deserialize_board(client_board)
+  client_board = request.get_json(silent=True)
+  board = new_board_object(client_board)
   moves = []
   for move in board.possible_moves():
     moves.append(Move(move))
@@ -62,39 +62,21 @@ def get_move_ai():
   board = moves[0].board
   print "AI Player:"
   print board
-  return jsonify_board(moves[0].board)
-
-# package board into json for api response
-def jsonify_board(board):
-  result = {"player_turn": board.player_turn}
-  json_board = [[" " for i in range(11)] for j in range(11)]
-  json_board[3][1] = "*"
-  json_board[3][9] = "*"
-  json_board[5][5] = "#"
-  json_board[7][1] = "*"
-  json_board[7][9] = "*"
-  for piece in board.pieces:
-    json_board[piece.x][piece.y] = piece.id
-  result["board"] = json_board
-  return json.dumps(result)
+  return json.dumps(board, default=lambda o: o.__dict__)
 
 # initial the board based on server file
 def init_board():
-  return gen.load_board("board")
+  return gen.load_board("boards/board")
 
-def deserialize_board(json):
+def new_board_object(json):
   pieces = []
-  for i in range(11):
-    for j in range(11):
-      if json["board"][i][j] in gen.WHITE_ID or \
-         json["board"][i][j] in gen.BLACK_ID:
-        pieces.append(gen.Piece(json["board"][i][j], i, j))
-  test = [gen.Piece("Z", 0, 0)]
-  # can't figure out why the object isn't being generated
-  print "test"
-  print gen.Wildebeest("W", gen.Piece("R", 0, 0), 0, 0, 0)
-  print gen.Wildebeest(json["player_turn"], pieces, 0, 0, 0)
-  return gen.Wildebeest(json["player_turn"], pieces, 0, 0, 0)
+  for json_piece in json["pieces"]:
+    piece_id = str(json_piece["id"])
+    x = int(json_piece["x"])
+    y = int(json_piece["y"])
+    pieces.append(gen.Piece(piece_id, x, y))
+  board = gen.Wildebeest(json["player_turn"], pieces, 0, 0, 0)
+  return board
 
 ## An instance of a state  
 class Move:
@@ -130,7 +112,7 @@ class Move:
         # value pieces and store friendly/enemy pieces in lists
         for piece in self.board.pieces:
             # black's turn, therefore calculate the move white made
-            if self.board.player_turn is "B":
+            if self.board.player_turn == "B":
                 if piece.id.isupper():
                     friendly_pieces[piece.id.upper()] = piece
                     score += Move.HEUR_VAL[piece.id.upper()]
@@ -138,7 +120,7 @@ class Move:
                     enemy_pieces[piece.id.upper()] = piece
                     score -= Move.HEUR_VAL[piece.id.upper()]
             # white's turn, therefore calculate the move black made
-            if self.board.player_turn is "W":
+            if self.board.player_turn == "W":
                 if piece.id.islower():
                     friendly_pieces[piece.id.upper()] = piece
                     score += Move.HEUR_VAL[piece.id.upper()]
@@ -147,13 +129,13 @@ class Move:
                     score -= Move.HEUR_VAL[piece.id.upper()]
         # add points for better catapult positioning
         if "C" in friendly_pieces:
-            if friendly_pieces["C"].x is not 0 and friendly_pieces["C"].x is not 10:
+            if friendly_pieces["C"].x != 0 and friendly_pieces["C"].x != 10:
                 score += 100
         return score
 
     # max / min with alpha beta pruning
     def max(self, board, depth, alpha, beta):
-        if depth is 0:
+        if depth == 0:
             return self.heuristic(board)
         for move in board.possible_moves():
             score = self.min(move, depth - 1, alpha, beta)
@@ -164,7 +146,7 @@ class Move:
         return alpha
 
     def min(self, board, depth, alpha, beta):
-        if depth is 0:
+        if depth == 0:
             return self.heuristic(board)
         for move in board.possible_moves():
             score = self.max(move, depth - 1, alpha, beta)
@@ -176,5 +158,5 @@ class Move:
 
 if __name__ == "__main__":
   board = init_board()
-  app.run(host="192.168.2.156", port=5000)
-  #app.run()
+  #app.run(host="192.168.2.156", port=5000)
+  app.run()

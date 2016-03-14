@@ -4,12 +4,18 @@ $(document).ready(function() {
     newBoard();
 
     // render current board to app
-    function renderBoard(board) {
-        var cell;
+    function renderBoard(pieces) {
+        // clear pieces
         for(i = 0; i < 11; i++) {
             for(j = 0; j < 11; j++) {
-                $("td[x$=\"" + i + "\"][y$=\"" + j + "\"]").text(board[i][j]);
+                $("td[x$=\"" + i + "\"][y$=\"" + j + "\"]").text("");
             }
+        }
+        var x, y;
+        for(key in pieces) {
+            x = pieces[key]["x"];
+            y = pieces[key]["y"];
+            $("td[x$=\"" + x + "\"][y$=\"" + y + "\"]").text(pieces[key]["id"]);
         }
     }
 
@@ -22,7 +28,7 @@ $(document).ready(function() {
             dataType: "json",
             success: function(data, status, jqXHR) {
                 current_board = data;
-                renderBoard(current_board["board"]);
+                renderBoard(current_board["pieces"]);
                 setplayerTurn();
             },
             error: function(jqXHR, status) {
@@ -33,10 +39,10 @@ $(document).ready(function() {
 
     // reset board button
     $("#reset-board").click(function() {
-        current_board = newBoard();
+        newBoard();
         $("#winner").text("");
         $("#invalid-move").popover("hide");
-        renderBoard(current_board["board"]);
+        renderBoard(current_board["pieces"]);
         setplayerTurn();
         enableInterface();
         loadingComplete();
@@ -64,9 +70,9 @@ $(document).ready(function() {
             success: function(data, status, jqXHR) {
                 current_board = data;
                 $("#invalid-move").popover("hide");
-                renderBoard(current_board["board"]);
+                renderBoard(current_board["pieces"]);
                 setplayerTurn();
-                if(isWinner()) return;
+                if(isWinner(current_board["pieces"])) return;
                 disableInterface();
                 loading();
                 getMoveAI();
@@ -84,14 +90,6 @@ $(document).ready(function() {
 
     // retrieve AI move from server
     function getMoveAI() {
-        // $.get("api/v1.0/move/ai", function(data, status) {
-        //     current_board = data;
-        //     renderBoard(current_board["board"]);
-        //     setplayerTurn();
-        //     if(isWinner()) return;
-        //     enableInterface();
-        //     loadingComplete();
-        // });
         $.ajax({
             type: "POST",
             data: JSON.stringify(current_board),
@@ -100,25 +98,21 @@ $(document).ready(function() {
             dataType: "json",
             success: function(data, status, jqXHR) {
                 current_board = data;
-                renderBoard(current_board["board"]);
+                renderBoard(current_board["pieces"]);
                 setplayerTurn();
-                if(isWinner()) return;
+                if(isWinner(current_board["pieces"])) return;
                 enableInterface();
                 loadingComplete();
             }
         });
     }
 
-    
-
     // check if winner
-    function isWinner() {
+    function isWinner(pieces) {
         var w = false, b = false;
-        for(i = 0; i < 11; i++) {
-            for(j = 0; j < 11; j++) {
-                if(current_board["board"][i][j] == "K" || current_board["board"][i][j] == "W") w = true;
-                if(current_board["board"][i][j] == "k" || current_board["board"][i][j] == "w") b = true;
-            }
+        for(key in pieces) {
+            if(pieces[key]["id"] == "K" || pieces[key]["id"] == "W") w = true;
+            if(pieces[key]["id"] == "k" || pieces[key]["id"] == "w") b = true;
         }
         if(w == true && b == true) return false;
         if(w == true && b == false) $("#winner").text("White wins!");
