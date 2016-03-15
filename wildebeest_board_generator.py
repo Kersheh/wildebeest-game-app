@@ -595,14 +595,13 @@ class Wildebeest(object):
         for piece in self.pieces:
             if piece.id in friendly_pieces:
                 # gorilla
-                if piece.id == "G" or piece.id == "g":
+                if piece.id is "G" or piece.id is "g":
                     for move in self.legal_piece_coordinates(piece, friendly_pieces):
                         # gorilla pushes piece if not flung
                         if abs(piece.x - move[0]) > 1 or abs(piece.y - move[1]) > 1:
                             pass
                         else:
-                            # cannot push gorilla
-                            if board[move[0]][move[1]] == "G" or board[move[0]][move[1]] == "g":
+                            if board[move[0]][move[1]] is "G" or board[move[0]][move[1]] is "g":
                                 continue
                             # attempts to push piece if piece found
                             if board[move[0]][move[1]] in friendly_pieces or \
@@ -615,8 +614,8 @@ class Wildebeest(object):
                                    y_squished < 0 or y_squished > 10:
                                     continue
                                 # cannot push piece into gorilla
-                                if board[x_squished][y_squished] == "G" or \
-                                   board[x_squished][y_squished] == "g":
+                                if board[x_squished][y_squished] is "G" or \
+                                   board[x_squished][y_squished] is "g":
                                     continue
                                 # remove pushed piece
                                 pieces.remove(self.get_piece(move[0], move[1]))
@@ -715,8 +714,11 @@ class Wildebeest(object):
         # gorilla
         if piece.id == "G" or piece.id == "g":
             # gorilla pushes piece if not flung
-            if abs(piece.x - move[0]) == 1 and abs(piece.y - move[1]) == 1:
-                # cannot push gorilla
+            if abs(piece.x - move[0]) > 1 or abs(piece.y - move[1]) > 1:
+                # remove enemy piece
+                if board[move[0]][move[1]] in enemy_pieces:
+                    pieces.remove(self.get_piece(move[0], move[1]))
+            else:
                 if board[move[0]][move[1]] == "G" or board[move[0]][move[1]] == "g":
                     return None
                 # attempts to push piece if piece found
@@ -816,11 +818,11 @@ def load_board(filename=None):
         if i == -1:
             player_turn = line.rstrip()
         elif i == 11:
-            elapsed_time = line.rstrip()
+            elapsed_time = int(line.rstrip())
         elif i == 12:
-            total_time = line.rstrip()
+            total_time = int(line.rstrip())
         elif i == 13:
-            move_count = line.rstrip()
+            move_count = int(line.rstrip())
         else:
             for j in range(len(line) - 1):
                 if line[j] == "." or line[j] == "*" or line[j] == "#":
