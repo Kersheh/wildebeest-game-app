@@ -36,7 +36,6 @@
     <div class="col-sm-8 text-center"> 
         <div>
           <h3>Wildebeest</h3>
-          <poetaytoe data-placement="left" data-content="AI: Potato Level.">
           <table class="board" id="invalid-move" data-trigger="focus" data-placement="right" data-content="Invalid move.">
             <tr x="-1">
                 <td class="grid" align="center"><span class="glyphicon glyphicon-leaf"></span></td>
@@ -207,11 +206,12 @@
                 <td class="w" align="center" x="10" y="10"> </td>
             </tr>
           </table>
-          </poetaytoe>
         </div>
         <div>
-          <p style="padding:10px">Player: W --- Player Turn: <span id="turn"></span>
-          <span id="loading" class="glyphicon"></span></p>
+          <p style="padding:10px">Player: <b>W</b> 
+            <span id="loading" class="glyphicon glyphicon-star-empty"></span> 
+            Turn: <b id="turn"></b>
+          </p>
           <p style="font-weight: bold" id="winner"></p>
           <form class="form-inline">
           <div class="form-group">

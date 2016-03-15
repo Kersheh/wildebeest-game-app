@@ -447,6 +447,16 @@ class Wildebeest(object):
 
     # after effects that occur after a move is completed
     def after_effects(self, pieces):
+        # check if king upgrades with jet pack
+        for piece in pieces:
+            if piece.x == 5 and piece.y == 5:
+                if piece.id == "K":
+                    pieces.remove(piece)
+                    pieces.append(Piece("W", 5, 5))
+                if piece.id == "k":
+                    pieces.remove(piece)
+                    pieces.append(Piece("w", 5, 5))
+
         # initial poison
         while(self.poison_effect(pieces)):
             pass
@@ -649,28 +659,6 @@ class Wildebeest(object):
                         else:
                             pieces.append(Piece(piece.id, move[0], move[1]))
 
-                        # remove enemy piece
-                        if board[move[0]][move[1]] in enemy_pieces:
-                            pieces.remove(self.get_piece(move[0], move[1]))
-                        yield self.generate_board(pieces)
-                        board = self.get_board() # reset temp board
-                        pieces = self.pieces[:] # reset temp pieces
-
-                # king 
-                elif piece.id == "K" or piece.id == "k":
-                    for move in self.legal_piece_coordinates(piece, friendly_pieces):
-                        # remove old piece
-                        if piece in pieces:
-                            pieces.remove(piece)
-                        # transform king into king with a jet back if on middle square
-                        if move[0] == 5 and move[1] == 5:
-                            if piece.id == "K":
-                                pieces.append(Piece("W", move[0], move[1]))
-                            if piece.id == "k":
-                                pieces.append(Piece("w", move[0], move[1]))
-                        # add new piece
-                        else:
-                            pieces.append(Piece(piece.id, move[0], move[1]))
                         # remove enemy piece
                         if board[move[0]][move[1]] in enemy_pieces:
                             pieces.remove(self.get_piece(move[0], move[1]))

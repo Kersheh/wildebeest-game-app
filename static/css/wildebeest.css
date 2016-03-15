@@ -5,7 +5,7 @@
 }
 
 /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
-.row.content {height: 720px}
+.row.content {height: 650px}
 
 /* Set gray background color and 100% height */
 .sidenav {
@@ -42,13 +42,25 @@ td {
 }
 .w, .b {
     font-weight: bold;
-    color: #D5322B;
+    color: #000000;
 }
 .w {
-    background-color: #f1f1f1;
+    background-color: #eeeed2;
 }
 .b {
-    background-color: #000000;
+
+    background-color: #baca44;
+}
+.special {
+    color: #769656;
+}
+.white_p {
+    color: #f1f1f1;
+    text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
+}
+.black_p {
+    color: #000000;
+     text-shadow: 1px 0 0 #fff, 0 -1px 0 #fff, 0 1px 0 #fff, -1px 0 0 #fff;
 }
 .form-group {
     padding:10px;

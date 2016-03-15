@@ -2,6 +2,8 @@ $(document).ready(function() {
     //initialize game
     var current_board;
     newBoard();
+    $("#player-tag").popover("show");
+    $("#ai-tag").popover("show");
 
     // render current board to app
     function renderBoard(pieces) {
@@ -9,18 +11,24 @@ $(document).ready(function() {
         for(i = 0; i < 11; i++) {
             for(j = 0; j < 11; j++) {
                 $("td[x$=\"" + i + "\"][y$=\"" + j + "\"]").text("");
-                if(i == 3 && j == 1) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").text("*");
-                if(i == 3 && j == 9) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").text("*");
-                if(i == 7 && j == 1) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").text("*");
-                if(i == 7 && j == 9) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").text("*");
-                if(i == 5 && j == 5) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").text("#");
+                if(i == 3 && j == 1) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").addClass("special").text("*");
+                if(i == 3 && j == 9) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").addClass("special").text("*");
+                if(i == 7 && j == 1) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").addClass("special").text("*");
+                if(i == 7 && j == 9) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").addClass("special").text("*");
+                if(i == 5 && j == 5) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").addClass("special").text("#");
             }
         }
-        var x, y;
+        var id, x, y;
         for(key in pieces) {
             x = "\"" + pieces[key]["x"] + "\"";
             y = "\"" + pieces[key]["y"] + "\""
-            $("td[x=" + x + "][y=" + y + "]").text(pieces[key]["id"]);
+            id = pieces[key]["id"];
+            if(id == id.toUpperCase()) {
+                $("td[x=" + x + "][y=" + y + "]").addClass("white_p").text(id);
+            }
+            else {
+                $("td[x=" + x + "][y=" + y + "]").addClass("black_p").text(id);
+            }
         }
     }
 
@@ -63,8 +71,19 @@ $(document).ready(function() {
         setMove($("#move-current-x").val(), $("#move-current-y").val(), $("#move-new-x").val(), $("#move-new-y").val());
     });
 
+    // client-side check if player is moving enemy piece
+    function friendlyPiece(x, y) {
+        var cell = $("td[x=\"" + x + "\"][y=\"" + y + "\"]").text()
+        if(cell == cell.toUpperCase()) return true;
+        return false;
+    }
+
     // commit move to board through server
     function setMove(x, y, x_new, y_new) {
+        if(!friendlyPiece(x, y)) {
+            $("#invalid-move").popover("show");
+            return;
+        }
         move_url = "api/v1.0/move/" + x + "x" + y + "x" + x_new + "x" + y_new;
         $.ajax({
             type: "POST",
@@ -81,9 +100,6 @@ $(document).ready(function() {
                 disableInterface();
                 loading();
                 getMoveAI();
-            },
-            error: function(jqXHR, status) {
-                $("#invalid-move").popover("show");
             },
             statusCode: {
                 400: function () {
@@ -148,12 +164,14 @@ $(document).ready(function() {
 
     // loading animation
     function loading() {
+        $("#loading").removeClass("glyphicon-star-empty");
         $("#loading").addClass("glyphicon-refresh glyphicon-refresh-animate");
     }
 
     // remove loading animation
     function loadingComplete() {
         $("#loading").removeClass("glyphicon-refresh glyphicon-refresh-animate");
+        $("#loading").addClass("glyphicon-star-empty");
     }
 
     // pressing enter submits move
