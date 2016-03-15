@@ -66,7 +66,7 @@ def get_move_ai():
 
 # initial the board based on server file
 def init_board():
-  return gen.load_board("boards/test")
+  return gen.load_board("boards/board")
 
 def new_board_object(json):
   pieces = []
