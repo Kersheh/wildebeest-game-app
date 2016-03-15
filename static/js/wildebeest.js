@@ -155,4 +155,9 @@ $(document).ready(function() {
     function loadingComplete() {
         $("#loading").removeClass("glyphicon-refresh glyphicon-refresh-animate");
     }
+
+    // pressing enter submits move
+    $("input").keyup(function(event) {
+        if(event.keyCode == 13) $("#set-move").click();
+    });
 });
