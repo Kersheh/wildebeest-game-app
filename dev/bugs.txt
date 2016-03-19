@@ -1,3 +1,0 @@
-Bug report:
-- Enemy gorilla captured player piece instead of pushing; needs more testing.
-- Client-side classes for colouring pieces needs to be rethought.

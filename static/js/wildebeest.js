@@ -10,6 +10,9 @@ $(document).ready(function() {
         // clear pieces
         for(i = 0; i < 11; i++) {
             for(j = 0; j < 11; j++) {
+                /* reset tile class */
+                $("td").removeClass("white_p");
+                $("td").removeClass("black_p");
                 $("td[x$=\"" + i + "\"][y$=\"" + j + "\"]").text("");
                 if(i == 3 && j == 1) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").addClass("special").text("*");
                 if(i == 3 && j == 9) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").addClass("special").text("*");

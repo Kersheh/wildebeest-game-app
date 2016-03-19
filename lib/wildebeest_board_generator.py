@@ -1,6 +1,4 @@
-#!/usr/bin/python
-
-import sys, os, subprocess, fileinput
+import sys, fileinput
 
 WHITE_ID = { "S", "O", "E", "J", "C", "G", "X", "H", "Z", "K", "W", "P", "B", "N", "R" }
 BLACK_ID = { "s", "o", "e", "j", "c", "g", "x", "h", "z", "k", "w", "p", "b", "n", "r" }
@@ -605,13 +603,13 @@ class Wildebeest(object):
         for piece in self.pieces:
             if piece.id in friendly_pieces:
                 # gorilla
-                if piece.id is "G" or piece.id is "g":
+                if piece.id == "G" or piece.id == "g":
                     for move in self.legal_piece_coordinates(piece, friendly_pieces):
                         # gorilla pushes piece if not flung
                         if abs(piece.x - move[0]) > 1 or abs(piece.y - move[1]) > 1:
                             pass
                         else:
-                            if board[move[0]][move[1]] is "G" or board[move[0]][move[1]] is "g":
+                            if board[move[0]][move[1]] == "G" or board[move[0]][move[1]] == "g":
                                 continue
                             # attempts to push piece if piece found
                             if board[move[0]][move[1]] in friendly_pieces or \
@@ -624,8 +622,8 @@ class Wildebeest(object):
                                    y_squished < 0 or y_squished > 10:
                                     continue
                                 # cannot push piece into gorilla
-                                if board[x_squished][y_squished] is "G" or \
-                                   board[x_squished][y_squished] is "g":
+                                if board[x_squished][y_squished] == "G" or \
+                                   board[x_squished][y_squished] == "g":
                                     continue
                                 # remove pushed piece
                                 pieces.remove(self.get_piece(move[0], move[1]))
@@ -797,7 +795,7 @@ class Wildebeest(object):
             pieces = self.pieces[:] # reset temp pieces
 
 # load board from stdin
-def load_board(filename=None):
+def load_board(filename):
     pieces = []
     i = -1
     for line in fileinput.input(filename):
@@ -821,18 +819,10 @@ def load_board(filename=None):
 
 # main function allows script to run to generate all boards as files
 if __name__ == '__main__':
-    if len(sys.argv) != 1:
-        print "usage: ./wildebeest_board_generator < [board_file]"
-        sys.exit(0)
-
-    # delete previous boards
-    FNULL = open(os.devnull, 'w')
-    subprocess.call(["rm board.*"], shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
-
-    wildebeest = load_board()
+    filename = "test"
+    wildebeest = load_board(filename)
     i = 0
     for move in wildebeest.possible_moves():
-        print move
-        # with open("board.{0:03d}".format(i), "w") as output:
-        #     output.write("{0}".format(move))
+        print "board.{0:03d}".format(i)
+        print "{0}".format(move)
         i += 1
