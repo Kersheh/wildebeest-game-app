@@ -24,66 +24,74 @@
 }
 
 .board {
-    width:330px;
-    height:330px;
-    border:1px solid black;
-    margin: 0 auto !important;
-    float: none !important;
+  width:330px;
+  height:330px;
+  border:1px solid black;
+  margin: 0 auto !important;
+  float: none !important;
 }
 
 /* Board */
 td {
-    width:30px;
-    height:30px;
-
+  width:30px;
+  height:30px;
+  display: table-cell; !important
 }
-.grid {
-    border:1px solid black;
+#grid, #w, #b {
+  border:1px solid black;
+  font-weight: bold;
 }
-.w, .b {
-    font-weight: bold;
-    color: #000000;
+#w {
+  background-color: #eeeed2;
 }
-.w {
-    background-color: #eeeed2;
-}
-.b {
-
+#b {
     background-color: #baca44;
 }
+.td-glyphicon {
+  top: 0px;
+  display: table-cell; !important
+}
+.rotate-ur {
+  transform: rotate(-30deg);
+}
+.rotate-dr {
+  transform: rotate(30deg);
+}
 .special {
-    color: #769656;
+  /*color: #769656;*/
+  color: #cd5a4c;
+  text-shadow: 1px 0 0 #fff, 0 -1px 0 #fff, 0 1px 0 #fff, -1px 0 0 #fff;
 }
 .white_p {
-    color: #f1f1f1;
-    text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
+  color: #f1f1f1;
+  text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
 }
 .black_p {
-    color: #000000;
-     text-shadow: 1px 0 0 #fff, 0 -1px 0 #fff, 0 1px 0 #fff, -1px 0 0 #fff;
+  color: #000000;
+  text-shadow: 1px 0 0 #fff, 0 -1px 0 #fff, 0 1px 0 #fff, -1px 0 0 #fff;
 }
 .form-group {
-    padding:10px;
+  padding:10px;
 }
 
 /* Loading animation */
 .glyphicon-refresh-animate {
-    -animation: spin .7s infinite linear;
-    -webkit-animation: spin2 .7s infinite linear;
-    -moz-animation: spin2 .7s infinite linear;
+  -animation: spin .7s infinite linear;
+  -webkit-animation: spin2 .7s infinite linear;
+  -moz-animation: spin2 .7s infinite linear;
 }
 
 @-webkit-keyframes spin2 {
-    from { -webkit-transform: rotate(0deg);}
-    to { -webkit-transform: rotate(360deg);}
+  from { -webkit-transform: rotate(0deg);}
+  to { -webkit-transform: rotate(360deg);}
 }
 
 @-moz-keyframes spin2 {
-    from { -moz-transform: rotate(0deg);}
-    to { -moz-transform: rotate(360deg);}
+  from { -moz-transform: rotate(0deg);}
+  to { -moz-transform: rotate(360deg);}
 }
 
 @keyframes spin {
-    from { transform: scale(1) rotate(0deg);}
-    to { transform: scale(1) rotate(360deg);}
+  from { transform: scale(1) rotate(0deg);}
+  to { transform: scale(1) rotate(360deg);}
 }

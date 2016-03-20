@@ -8,30 +8,68 @@ $(document).ready(function() {
     // render current board to app
     function renderBoard(pieces) {
         // clear pieces
+        $("td").attr("class", "");
         for(i = 0; i < 11; i++) {
             for(j = 0; j < 11; j++) {
-                /* reset tile class */
-                $("td").removeClass("white_p");
-                $("td").removeClass("black_p");
-                $("td[x$=\"" + i + "\"][y$=\"" + j + "\"]").text("");
-                if(i == 3 && j == 1) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").addClass("special").text("*");
-                if(i == 3 && j == 9) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").addClass("special").text("*");
-                if(i == 7 && j == 1) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").addClass("special").text("*");
-                if(i == 7 && j == 9) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").addClass("special").text("*");
-                if(i == 5 && j == 5) $("td[x=\"" + i + "\"][y=\"" + j + "\"]").addClass("special").text("#");
+                $("td[x=\"" + i + "\"][y=\"" + j + "\"]").text("");
             }
         }
+        // update special tiles
+        $("td[x=3][y=1]").html("<span class=\"special glyphicon glyphicon-circle-arrow-right td-glyphicon rotate-dr\"></span>");
+        $("td[x=3][y=9]").html("<span class=\"special glyphicon glyphicon-circle-arrow-left td-glyphicon\"></span>");
+        $("td[x=7][y=1]").html("<span class=\"special glyphicon glyphicon-circle-arrow-right td-glyphicon rotate-ur\"></span>");
+        $("td[x=7][y=9]").html("<span class=\"special glyphicon glyphicon-circle-arrow-left td-glyphicon\"></span>");
+        $("td[x=5][y=5]").html("<span class=\"special glyphicon glyphicon-record td-glyphicon\"> </span>");
+        // add pieces
         var id, x, y;
         for(key in pieces) {
             x = "\"" + pieces[key]["x"] + "\"";
             y = "\"" + pieces[key]["y"] + "\""
             id = pieces[key]["id"];
+            glyph = getGlyph(id.toUpperCase());
+            $("td[x=" + x + "][y=" + y + "]").text("");
             if(id == id.toUpperCase()) {
-                $("td[x=" + x + "][y=" + y + "]").addClass("white_p").text(id);
+                $("td[x=" + x + "][y=" + y + "]").addClass("white_p glyphicon td-glyphicon " + glyph);
             }
             else {
-                $("td[x=" + x + "][y=" + y + "]").addClass("black_p").text(id);
+                $("td[x=" + x + "][y=" + y + "]").addClass("black_p glyphicon td-glyphicon " + glyph);
             }
+        }
+    }
+
+    // return glyph name based on piece id
+    function getGlyph(id) {
+        switch(id) {
+            case "R":
+                return "glyphicon-tower";
+            case "N":
+                return "glyphicon-knight"
+            case "Z":
+                return "glyphicon-cloud";
+            case "B":
+                return "glyphicon-bishop"
+            case "O":
+                return "glyphicon-queen";
+            case "E":
+                return "glyphicon-queen"; //find replacement
+            case "K":
+                return "glyphicon-king";
+            case "W":
+                return "glyphicon-king"; //find replacement
+            case "X":
+                return "glyphicon-tint";
+            case "C":
+                return "glyphicon-plane"
+            case "G":
+                return "glyphicon-wrench";
+            case "P":
+                return "glyphicon-pawn";
+            case "S":
+                return "glyphicon-fire"
+            case "J":
+                return "glyphicon-glass";
+            default:
+                return "";
         }
     }
 
@@ -167,14 +205,14 @@ $(document).ready(function() {
 
     // loading animation
     function loading() {
-        $("#loading").removeClass("glyphicon-star-empty");
+        $("#loading").removeClass("glyphicon-resize-horizontal");
         $("#loading").addClass("glyphicon-refresh glyphicon-refresh-animate");
     }
 
     // remove loading animation
     function loadingComplete() {
         $("#loading").removeClass("glyphicon-refresh glyphicon-refresh-animate");
-        $("#loading").addClass("glyphicon-star-empty");
+        $("#loading").addClass("glyphicon-resize-horizontal");
     }
 
     // pressing enter submits move

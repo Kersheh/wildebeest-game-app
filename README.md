@@ -22,6 +22,8 @@ python server.py
 ---
 
 ## Release History
+v1.1: Updated game piece and board graphics. Note: No visual indicators for king with jet pack, empress, or charged golf cart.
+
 v1.0: Playable game of Wildebeest against a low-level computer.
 
 ---
@@ -29,6 +31,5 @@ v1.0: Playable game of Wildebeest against a low-level computer.
 * Neatly present game rules.
 * Show move history and/or better indicate AI's move.
 * Drag-and-drop to move pieces.
-* Improved UI: art for pieces, board, etc.
 * Multiplayer support with chat.
 * Improved AI.
